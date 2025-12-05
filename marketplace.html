@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - Sustainable Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <span>EcoMarket</span>
+                </a>
+                
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="marketplace.html" class="active">Marketplace</a></li>
+                    <li><a href="add-item.html">List Item</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                </ul>
+                
+                <div class="user-menu">
+                    <span id="userGreeting" style="display: none;"></span>
+                    <a href="login.html" class="btn btn-secondary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <button onclick="logout()" class="btn btn-danger" id="logoutBtn" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 3rem 0;">
+            <h1 style="color: var(--primary-green); margin-right: 20px;">Sustainable Marketplace</h1>
+            <a href="add-item.html" class="btn btn-primary">
+                <i class="fas fa-plus"></i> List New Item
+            </a>
+        </div>
+
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem;">Filter Items</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div>
+                    <label>Category</label>
+                    <select id="categoryFilter" class="form-control" onchange="loadItems()">
+                        <option value="">All Categories</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="books">Books</option>
+                        <option value="furniture">Furniture</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Location</label>
+                    <input type="text" id="locationFilter" class="form-control" placeholder="Enter city" oninput="loadItems()">
+                </div>
+                <div>
+                    <label>Condition</label>
+                    <select id="conditionFilter" class="form-control" onchange="loadItems()">
+                        <option value="">Any Condition</option>
+                        <option value="new">New</option>
+                        <option value="like-new">Like New</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="itemsContainer" class="items-grid">
+            </div>
+
+        <div id="noResults" style="display: none; text-align: center; padding: 3rem;">
+            <i class="fas fa-search" style="font-size: 3rem; color: var(--medium-gray); margin-bottom: 1rem;"></i>
+            <h3>No Items Found</h3>
+            <p>Try adjusting your filters or be the first to list an item!</p>
+            <a href="add-item.html" class="btn btn-primary">List First Item</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>&copy; 2024 Sustainable Community Marketplace. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
+    
+    <script src="script.js"></script>
+    
+    </body>
+</html>

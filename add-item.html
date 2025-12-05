@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Item - Sustainable Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <span>EcoMarket</span>
+                </a>
+                <a href="marketplace.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Marketplace
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="form-container">
+            <h1 style="text-align: center; margin-bottom: 2rem; color: var(--primary-green);">
+                <i class="fas fa-plus-circle"></i> List a Sustainable Item
+            </h1>
+            
+            <form id="addItemForm">
+                <div class="form-group">
+                    <label for="itemName"><i class="fas fa-tag"></i> Item Name *</label>
+                    <input type="text" id="itemName" class="form-control" placeholder="e.g., Old Laptop, Winter Coat, Books" required>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="category"><i class="fas fa-layer-group"></i> Category *</label>
+                        <select id="category" class="form-control" required>
+                            <option value="">Select Category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="books">Books</option>
+                            <option value="furniture">Furniture</option>
+                            <option value="kitchen">Kitchen Items</option>
+                            <option value="toys">Toys & Games</option>
+                            <option value="sports">Sports Equipment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="condition"><i class="fas fa-check-circle"></i> Condition *</label>
+                        <select id="condition" class="form-control" required>
+                            <option value="">Select Condition</option>
+                            <option value="new">New</option>
+                            <option value="like-new">Like New</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="needs-repair">Needs Repair</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="materials"><i class="fas fa-recycle"></i> Materials (Optional)</label>
+                    <input type="text" id="materials" class="form-control" placeholder="e.g., Plastic, Wood, Metal, Cotton">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description"><i class="fas fa-align-left"></i> Description *</label>
+                    <textarea id="description" class="form-control" rows="4" 
+                              placeholder="Describe your item and why it should be reused/recycled..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location"><i class="fas fa-map-marker-alt"></i> Location *</label>
+                    <input type="text" id="location" class="form-control" placeholder="City, State" required>
+                </div>
+                
+                <div class="ai-recommendations" id="aiSection" style="display: none;">
+                    <h3><i class="fas fa-robot"></i> AI Recommendations</h3>
+                    <div id="aiResults">
+                        </div>
+                </div>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    <button type="button" onclick="getAIRecommendationsFromForm()" class="btn btn-warning" id="aiRecommendBtn" style="margin-right: 1rem;">
+                        <i class="fas fa-robot"></i> Get AI Recommendations
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-leaf"></i> List Item Sustainably
+                    </button>
+                </div>
+                
+                <div style="background: var(--light-green); padding: 1rem; border-radius: var(--border-radius); margin-top: 2rem;">
+                    <p style="margin: 0; color: var(--primary-green);">
+                        <i class="fas fa-info-circle"></i> 
+                        By listing this item, you're helping reduce waste and promote circular economy!
+                    </p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>&copy; 2024 Sustainable Community Marketplace. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
+    
+    <script src="script.js"></script>
+    <script>
+        async function getAIRecommendationsFromForm() {
+            const itemNameInput = document.getElementById('itemName');
+            const categoryInput = document.getElementById('category');
+
+            if (!itemNameInput.value || !categoryInput.value) {
+                window.showNotification('Please enter item name and category first', 'warning');
+                return;
+            }
+
+            const itemData = {
+                name: itemNameInput.value,
+                category: categoryInput.value,
+                condition: document.getElementById('condition').value,
+                description: document.getElementById('description').value,
+                materials: document.getElementById('materials').value
+            };
+
+            const aiBtn = document.getElementById('aiRecommendBtn');
+            const originalText = aiBtn.innerHTML;
+            aiBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            aiBtn.disabled = true;
+
+            try {
+                // Call the global function
+                const result = await window.getAIRecommendations(itemData);
+                
+                // Display recommendations (also a global function)
+                window.displayAIRecommendations(result);
+                
+                // Auto-generate description if empty
+                const descriptionInput = document.getElementById("description");
+                if (!descriptionInput.value || descriptionInput.value === 'No description provided' || descriptionInput.value === itemData.description) {
+                    const aiDescription = await window.generateItemDescription(itemData.name, itemData.category);
+                    descriptionInput.value = aiDescription.trim();
+                }
+
+                window.showNotification('AI analysis completed!', 'success');
+                
+                // Scroll to AI section
+                document.getElementById('aiSection').scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error("AI Recommendations Error:", error);
+                window.showNotification('AI analysis failed. Using fallback recommendations.', 'warning');
+                // Call fallback function directly since it's now global
+                const fallbackRecs = window.getFallbackRecommendations(itemData.category);
+                window.displayAIRecommendations(fallbackRecs);
+            } finally {
+                aiBtn.innerHTML = originalText;
+                aiBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
