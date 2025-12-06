@@ -361,4 +361,5 @@ For issues or feature requests, please contact the development team.
 **Last Updated**: December 2025  
 **Status**: Active & Ready for Judge Evaluation
 
-### Github link
+### Github link: https://navin12396.github.io/sustainable-marketplace/
+
