@@ -58,12 +58,18 @@ document.addEventListener("DOMContentLoaded", function () {
       if (userDoc.exists) {
         currentUser = { ...user, ...userDoc.data() };
       }
+    } else {
+      // Only sign in anonymously if not in the middle of logging out
+      const isLoggingOut = sessionStorage.getItem('isLoggingOut');
+      if (!isLoggingOut) {
+        await ensureReadAuth();
+      }
     }
     updateAuthUI();
     initializePage();
     
-
-    updateLiveStats();
+    // Update stats after auth is ready
+    await updateLiveStats();
 
   });
 });
@@ -80,7 +86,8 @@ function updateAuthUI() {
   const signUpBtn = document.querySelector('a[href="register.html"]');
   const navLinks = document.querySelector('.nav-links'); 
 
-  if (currentUser) {
+  // Check if user is logged in AND not anonymous
+  if (currentUser && !currentUser.isAnonymous) {
     if (loginBtn) loginBtn.style.display = "none";
     if (signUpBtn) signUpBtn.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "inline-flex";
@@ -90,7 +97,8 @@ function updateAuthUI() {
       }`;
       userGreeting.style.display = "inline";
     }
-     } else {
+  } else {
+    // User is logged out or anonymous
     if (loginBtn) loginBtn.style.display = "inline-flex";
     if (signUpBtn) signUpBtn.style.display = "inline-flex";
     if (logoutBtn) logoutBtn.style.display = "none";
@@ -249,6 +257,11 @@ async function updateLiveStats() {
     const activeNGOsElement = document.getElementById("activeNGOs");
     const communityMembersElement = document.getElementById("communityMembers");
 
+    // If elements don't exist (not on homepage), exit early
+    if (!totalItemsSavedElement || !totalCarbonReducedElement) {
+        return;
+    }
+
     // Initialize accumulators
     let totalCarbonSaved = 0;
     let activeNGOs = 0;
@@ -256,6 +269,11 @@ async function updateLiveStats() {
     let totalItems = 0; 
     
     try {
+        // Ensure we have authentication (even anonymous)
+        if (!auth.currentUser) {
+            await ensureReadAuth();
+        }
+
         // Fetch ALL users and ALL items in parallel
         const [usersSnapshot, itemsSnapshot] = await Promise.all([
             db.collection("users").get(),
@@ -280,12 +298,16 @@ async function updateLiveStats() {
         // Update HTML with animation
         animateValue(totalItemsSavedElement, 0, totalItems, 2000);
         animateValue(totalCarbonReducedElement, 0, totalCarbonSaved, 2000);
-        animateValue(activeNGOsElement, 0, activeNGOs, 2000);
-        animateValue(communityMembersElement, 0, communityMembers, 2000);
+        if (activeNGOsElement) animateValue(activeNGOsElement, 0, activeNGOs, 2000);
+        if (communityMembersElement) animateValue(communityMembersElement, 0, communityMembers, 2000);
 
     } catch (error) {
         console.error("Error updating live stats:", error);
-        // If query fails, keep the hardcoded fallback numbers from the HTML
+        // Fallback: Show default values
+        if (totalItemsSavedElement) totalItemsSavedElement.textContent = "40";
+        if (totalCarbonReducedElement) totalCarbonReducedElement.textContent = "40";
+        if (activeNGOsElement) activeNGOsElement.textContent = "3";
+        if (communityMembersElement) communityMembersElement.textContent = "2";
     }
 }
 
@@ -926,7 +948,7 @@ function renderFacilityCard(facility) {
                     <a href="mailto:${facility.email}" style="color: var(--primary-green); text-decoration: none;">${facility.email}</a>
                 </p>
             </div>
-            
+                      
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                 <button 
                    onclick="makeCall("7357613931");"
@@ -2115,12 +2137,19 @@ function showNotification(message, type = "info") {
 // Global functions for HTML onclick
 window.logout = async function () {
   try {
+    // Set flag to prevent auto anonymous sign-in
+    sessionStorage.setItem('isLoggingOut', 'true');
+    
     await auth.signOut();
     showNotification("Logged out successfully", "success");
+    
+    // Clear the flag and redirect
     setTimeout(() => {
+      sessionStorage.removeItem('isLoggingOut');
       window.location.href = "index.html";
     }, 1000);
   } catch (error) {
+    sessionStorage.removeItem('isLoggingOut');
     showNotification(error.message, "error");
   }
 };
