@@ -10,8 +10,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <!-- Header -->
+  <body class="home">
     <header>
       <div class="container">
         <nav>
@@ -20,12 +19,18 @@
             <span>EcoMarket</span>
           </a>
 
+          <button class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
           <ul class="nav-links">
             <li><a href="index.html" class="active">Home</a></li>
             <li><a href="marketplace.html">Marketplace</a></li>
             <li><a href="add-item.html">List Item</a></li>
-            <li><a href="dashboard.html">Dashboard</a></li>
-            <li><a href="#about">About</a></li>
+            
+            <li><a href="#footer">Contact US</a></li>
           </ul>
 
           <div class="user-menu">
@@ -33,11 +38,11 @@
             <a href="login.html" class="btn btn-secondary" id="loginBtn">
               <i class="fas fa-sign-in-alt"></i> Login
             </a>
-            <a href="register.html" class="btn btn-primary">
+            <a href="user-register.html" class="btn btn-primary">
               <i class="fas fa-user-plus"></i> Sign Up
             </a>
             <button
-              onclick="auth.logout()"
+              onclick="logout()"
               class="btn btn-danger"
               id="logoutBtn"
               style="display: none"
@@ -49,7 +54,6 @@
       </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
       <div class="container">
         <h1>Give Items New Life, Not Landfills</h1>
@@ -73,7 +77,6 @@
       </div>
     </section>
 
-    <!-- Stats Section -->
     <section class="container" style="padding: 3rem 0">
       <h2
         style="
@@ -85,26 +88,19 @@
         Our Impact
       </h2>
       <div class="stats-grid">
-        <div class="stat-card">
-          <h3>2,847</h3>
-          <p>Items Saved from Landfills</p>
-        </div>
-        <div class="stat-card">
-          <h3>15.2K</h3>
-          <p>Kg CO₂ Reduced</p>
-        </div>
-        <div class="stat-card">
-          <h3>189</h3>
-          <p>Active NGOs</p>
-        </div>
-        <div class="stat-card">
-          <h3>5,231</h3>
-          <p>Community Members</p>
-        </div>
-      </div>
+
+    <div class="stat-card">
+        <h3 id="totalCarbonReduced"></h3> <p>Kg CO₂ Reduced</p>
+    </div>
+    <div class="stat-card">
+        <h3 id="activeNGOs"></h3> <p>Active NGOs</p>
+    </div>
+    <div class="stat-card">
+        <h3 id="communityMembers"></h3> <p>Community Members</p>
+     </div>
+</div>
     </section>
 
-    <!-- How It Works -->
     <section style="background: var(--light-green); padding: 3rem 0">
       <div class="container">
         <h2
@@ -166,21 +162,57 @@
       </div>
     </section>
 
-    <!-- Featured Items -->
-    <section class="container" style="padding: 3rem 0">
+    <section class="container" style="padding: 3rem 0; text-align: center;">
       <h2 style="margin-bottom: 2rem; color: var(--primary-green)">
-        Recently Listed Items
+        Ready to Make an Impact?
       </h2>
-      <div class="items-grid" id="featuredItems">
-        <!-- Items will be loaded by JavaScript -->
+      
+      <div class="items-grid">
+        
+        <div class="card" style="padding: 2rem;">
+            <div style="font-size: 3rem; color: var(--primary-green); margin-bottom: 1rem;">
+              <i class="fas fa-plus-circle"></i>
+            </div>
+            <h3>List Your Item</h3>
+            <p style="color: #666; margin-bottom: 1rem;">
+                Get AI recommendations and connect your item with a new owner or recycler.
+            </p>
+            <a href="add-item.html" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Start Listing
+            </a>
+        </div>
+        
+        <div class="card" style="padding: 2rem;">
+            <div style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1rem;">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3>Browse for Reuse</h3>
+            <p style="color: #666; margin-bottom: 1rem;">
+                Find items you need and contribute to the circular economy today.
+            </p>
+            <a href="marketplace.html" class="btn btn-secondary">
+                <i class="fas fa-search"></i> Go to Marketplace
+            </a>
+        </div>
+        
+        <div class="card" style="padding: 2rem;">
+            <div style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>View Your Impact</h3>
+            <p style="color: #666; margin-bottom: 1rem;">
+                See how much CO₂ and landfill space you've helped save so far.
+            </p>
+            <a href="dashboard.html" class="btn btn-warning">
+                <i class="fas fa-tachometer-alt"></i> My Dashboard
+            </a>
+        </div>
+        
       </div>
-      <div style="text-align: center; margin-top: 2rem">
-        <a href="marketplace.html" class="btn btn-primary">View All Items</a>
-      </div>
+      
     </section>
 
-    <!-- Footer -->
-    <footer>
+    <footer id = "footer">
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
@@ -194,6 +226,7 @@
               <li><a href="marketplace.html">Marketplace</a></li>
               <li><a href="add-item.html">List Item</a></li>
               <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="ngo-dashboard.html">NGO's Dashboard</a></li>
             </ul>
           </div>
           <div class="footer-section">
@@ -215,59 +248,33 @@
       </div>
     </footer>
 
-    <script src="script.js"></script>
-    <script>
-      // Load featured items on home page
-      document.addEventListener("DOMContentLoaded", function () {
-        const itemsContainer = document.getElementById("featuredItems");
-        if (itemsContainer) {
-          const items = auth.getAllItems().slice(0, 3);
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
 
-          if (items.length === 0) {
-            itemsContainer.innerHTML = `
-                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                            <p>No items listed yet. Be the first to list an item!</p>
-                            <a href="add-item.html" class="btn btn-primary">List First Item</a>
-                        </div>
-                    `;
-          } else {
-            itemsContainer.innerHTML = items
-              .map(
-                (item) => `
-                        <div class="item-card">
-                            <img src="https://via.placeholder.com/300x200/90EE90/2E8B57?text=${encodeURIComponent(
-                              item.name
-                            )}" 
-                                 alt="${item.name}" class="item-image">
-                            <div class="item-content">
-                                <span class="item-category">${
-                                  item.category
-                                }</span>
-                                <h3 class="item-title">${item.name}</h3>
-                                <p class="item-description">${item.description.substring(
-                                  0,
-                                  100
-                                )}...</p>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
-                                    <span style="font-weight: bold; color: var(--primary-green);">
-                                        <i class="fas fa-map-marker-alt"></i> ${
-                                          item.location
-                                        }
-                                    </span>
-                                    <a href="item-detail.html?id=${
-                                      item.id
-                                    }" class="btn btn-primary" style="padding: 5px 15px;">
-                                        View Details
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    `
-              )
-              .join("");
-          }
-        }
-      });
+    <script src="script.js"></script>
+
+    <script>
+      // Hamburger menu toggle
+      const menuToggle = document.getElementById('menuToggle');
+      const navLinks = document.querySelector('.nav-links');
+      
+      if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+          this.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+          link.addEventListener('click', function() {
+            menuToggle.classList.remove('active');
+            navLinks.classList.remove('active');
+          });
+        });
+      }
     </script>
-  </body>
+
+    </body>
 </html>

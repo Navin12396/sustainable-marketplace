@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Sustainable Marketplace</title>
+    <title>NGO Registration - Sustainable Marketplace</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css" /> 
   </head>
   <body>
     <header>
@@ -56,59 +56,120 @@
             color: var(--primary-green);
           "
         >
-          Login to Your Account
+          <i class="fas fa-hands-helping"></i> NGO/Charity Registration
         </h1>
+        <p style="text-align: center; margin-bottom: 1.5rem; color: #666">
+          Register to receive donated items and boost your environmental impact! Account requires verification.
+        </p>
 
-        <form id="loginForm">
+        <form id="ngoRegisterForm">
           <div class="form-group">
-            <label for="email"
-              ><i class="fas fa-envelope"></i> Email Address</label
-            >
+            <label for="ngoName"><i class="fas fa-hand-holding-heart"></i> Organization Name *</label>
             <input
-              type="email"
-              id="email"
-              class="form-control"
-              placeholder="Enter your email"
+              type="text"
+              id="ngoName"
+              class="form-control"  
+              
+              placeholder="Enter official organization name"
               required
             />
           </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email"
+                ><i class="fas fa-envelope"></i> Email Address *</label
+              >
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                placeholder="Official email"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="phone"
+                ><i class="fas fa-phone"></i> Phone Number</label
+              >
+              <input
+                type="tel"
+                id="phone"
+                class="form-control"
+                placeholder="Enter phone number"
+              />
+            </div>
+          </div>
+
 
           <div class="form-group">
-            <label for="password"><i class="fas fa-lock"></i> Password</label>
+            <label for="password"><i class="fas fa-lock"></i> Password *</label>
             <input
               type="password"
               id="password"
               class="form-control"
-              placeholder="Enter your password"
+              placeholder="Create a password"
+              required
+              minlength="6"
+            />
+          </div>
+
+          
+          <div class="form-group">
+            <label for="address"
+              ><i class="fas fa-map-marker-alt"></i> Physical Address *</label
+            >
+            <input
+              type="text"
+              id="address"
+              class="form-control"
+              placeholder="Street, City, State, Zip"
               required
             />
           </div>
 
           <div class="form-group">
-            <button 
+            <label for="website"
+              ><i class="fas fa-globe"></i> Website URL</label
+            >
+            <input
+              type="url"
+              id="website"
+              class="form-control"
+              placeholder="https://www.your-ngo.org"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="mission"
+              ><i class="fas fa-info-circle"></i> Mission Statement Summary *</label
+            >
+            <textarea
+              id="mission"
+              class="form-control"
+              rows="3"
+              placeholder="Briefly describe your organization's mission and what types of items you typically need (e.g., We provide clothing and electronics to low-income families in Cityville)."
+              required
+            ></textarea>
+          </div>
+          
+          <div class="form-group" style="margin-top: 2rem;">
+            <button
             id="btn-login"
               type="submit"
-              class="btn btn-primary"
-              
-              style="width: 100%; padding: 12px;"
+              class="btn btn-primary" 
+              style="width: 100%; padding: 12px"
             >
-              <i class="fas fa-sign-in-alt"></i> Login
+              <i class="fas fa-check-circle"></i> Submit NGO Registration
             </button>
           </div>
 
           <div style="text-align: center; margin-top: 1rem">
-           
             <p>
-              Register as NGO?
-              <a href="ngo-register.html" style="color: var(--primary-green)"
-                >NGO Registration</a
-              >
-            </p>
-
-            <p>
-              Register as User?
-              <a href="user-register.html" style="color: var(--primary-green)"
-                >Registration</a
+              Returning NGO or Individual User?
+              <a href="login.html" style="color: var(--primary-green)"
+                >Login here</a
               >
             </p>
           </div>
@@ -151,12 +212,12 @@
         </div>
       </div>
     </footer>
-
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
-    
+
+    <!-- Main Script -->
     <script src="script.js"></script>
   </body>
 </html>

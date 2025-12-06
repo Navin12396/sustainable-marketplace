@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generate Report - EcoMarket NGO Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .report-container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .report-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .report-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .report-card:hover {
+        border-color: var(--primary-green);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+      }
+
+      .report-card i {
+        font-size: 2.5rem;
+        color: var(--primary-green);
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .report-card h3 {
+        margin: 0 0 0.5rem 0;
+        color: var(--primary-green);
+      }
+
+      .report-card p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .report-view {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: none;
+      }
+
+      .report-view.active {
+        display: block;
+      }
+
+      .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--light-green);
+      }
+
+      .report-header h2 {
+        margin: 0;
+        color: var(--primary-green);
+      }
+
+      .report-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .report-actions button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-download {
+        background: var(--primary-green);
+        color: white;
+      }
+
+      .btn-download:hover {
+        background: #45a049;
+      }
+
+      .btn-back {
+        background: #e0e0e0;
+        color: #333;
+      }
+
+      .btn-back:hover {
+        background: #d0d0d0;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .metric-box {
+        background: var(--light-green);
+        padding: 1.5rem;
+        border-radius: 6px;
+        border-left: 4px solid var(--primary-green);
+      }
+
+      .metric-box strong {
+        display: block;
+        color: #666;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .metric-box .value {
+        font-size: 2rem;
+        color: var(--primary-green);
+        font-weight: bold;
+      }
+
+      .timeline {
+        margin-top: 2rem;
+      }
+
+      .timeline-item {
+        display: flex;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: #f9f9f9;
+        border-radius: 6px;
+        border-left: 3px solid var(--primary-green);
+      }
+
+      .timeline-date {
+        flex: 0 0 150px;
+        font-weight: 600;
+        color: var(--primary-green);
+        font-size: 0.9rem;
+      }
+
+      .timeline-content {
+        flex: 1;
+      }
+
+      .timeline-content h4 {
+        margin: 0 0 0.3rem 0;
+        color: #333;
+      }
+
+      .timeline-content p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .info-section {
+        background: #f0f7ff;
+        padding: 1.5rem;
+        border-radius: 6px;
+        margin-bottom: 2rem;
+        border-left: 4px solid #2196F3;
+      }
+
+      .info-section h3 {
+        margin-top: 0;
+        color: #1976D2;
+      }
+
+      .summary-box {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+      }
+
+      .summary-box h3 {
+        margin-top: 0;
+        color: var(--primary-green);
+      }
+
+      .chart-placeholder {
+        background: var(--light-green);
+        padding: 2rem;
+        border-radius: 6px;
+        text-align: center;
+        color: #666;
+        margin-bottom: 1.5rem;
+      }
+
+      .chart-placeholder i {
+        font-size: 2rem;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      @media print {
+        .report-header, .report-actions, .report-options {
+          display: none;
+        }
+        
+        body {
+          background: white;
+        }
+        
+        .report-view {
+          box-shadow: none;
+          padding: 0;
+        }
+      }
+    </style>
+</head>
+<body>
+    <header>
+      <div class="container">
+        <nav>
+          <a href="index.html" class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>EcoMarket</span>
+          </a>
+
+          <button class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <ul class="nav-links">
+            <li><a href="ngo-dashboard.html">Dashboard</a></li>
+            <li><a href="generate-report.html" class="active">Generate Report</a></li>
+            <li><a href="marketplace.html">Marketplace</a></li>
+            <li><a href="#footer">Contact</a></li>
+          </ul>
+
+          <div class="user-menu">
+            <span id="userGreeting"></span>
+            <button
+              onclick="logout()"
+              class="btn btn-danger"
+              id="logoutBtn"
+            >
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container" style="padding: 2rem 0;">
+      <div style="margin-bottom: 2rem;">
+        <h1 style="color: var(--primary-green); margin-bottom: 0.5rem;">
+          <i class="fas fa-chart-line"></i> Impact Report
+        </h1>
+        <p style="color: #666;">Track and document your NGO's environmental and social impact</p>
+      </div>
+
+      <div class="report-container">
+        <!-- Report Selection -->
+        <div id="reportOptions" class="report-options">
+          <div class="report-card" onclick="showReport('summary')">
+            <i class="fas fa-chart-pie"></i>
+            <h3>Impact Summary</h3>
+            <p>Overall metrics and achievements</p>
+          </div>
+          <div class="report-card" onclick="showReport('detailed')">
+            <i class="fas fa-list"></i>
+            <h3>Detailed Report</h3>
+            <p>Complete breakdown of all donations</p>
+          </div>
+          <div class="report-card" onclick="showReport('timeline')">
+            <i class="fas fa-history"></i>
+            <h3>Activity Timeline</h3>
+            <p>Donation history and milestones</p>
+          </div>
+          <div class="report-card" onclick="showReport('impact')">
+            <i class="fas fa-leaf"></i>
+            <h3>Environmental Impact</h3>
+            <p>Carbon reduction and waste saved</p>
+          </div>
+        </div>
+
+        <!-- Impact Summary Report -->
+        <div id="summaryReport" class="report-view">
+          <div class="report-header">
+            <h2><i class="fas fa-chart-pie"></i> Impact Summary Report</h2>
+            <div class="report-actions">
+              <button class="btn-download" onclick="downloadReport('summary')">
+                <i class="fas fa-download"></i> Download PDF
+              </button>
+              <button class="btn-back" onclick="backToOptions()">
+                <i class="fas fa-arrow-left"></i> Back
+              </button>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h3>Report Generated</h3>
+            <p id="reportDate"></p>
+            <p>Organization: <strong id="orgName"></strong></p>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-box">
+              <strong>Total Donations Claimed</strong>
+              <div class="value" id="summaryDonationsClaimed">0</div>
+            </div>
+            <div class="metric-box">
+              <strong>Items Actually Received</strong>
+              <div class="value" id="summaryItemsReceived">0</div>
+            </div>
+            <div class="metric-box">
+              <strong>Total Impact Score</strong>
+              <div class="value" id="summaryImpactScore">0</div>
+            </div>
+            <div class="metric-box">
+              <strong>Pending Requests</strong>
+              <div class="value" id="summaryPending">0</div>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <h3>Key Achievements</h3>
+            <ul id="achievementsList" style="color: #666; line-height: 1.8;">
+              <li>Loading achievements...</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Detailed Report -->
+        <div id="detailedReport" class="report-view">
+          <div class="report-header">
+            <h2><i class="fas fa-list"></i> Detailed Donation Report</h2>
+            <div class="report-actions">
+              <button class="btn-download" onclick="downloadReport('detailed')">
+                <i class="fas fa-download"></i> Download PDF
+              </button>
+              <button class="btn-back" onclick="backToOptions()">
+                <i class="fas fa-arrow-left"></i> Back
+              </button>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h3>Accepted Donations</h3>
+            <p>The following donations have been accepted and delivered to your organization:</p>
+          </div>
+
+          <div id="detailedList" style="margin-bottom: 2rem;">
+            <p style="text-align: center; color: #999;">Loading donations...</p>
+          </div>
+        </div>
+
+        <!-- Timeline Report -->
+        <div id="timelineReport" class="report-view">
+          <div class="report-header">
+            <h2><i class="fas fa-history"></i> Activity Timeline</h2>
+            <div class="report-actions">
+              <button class="btn-download" onclick="downloadReport('timeline')">
+                <i class="fas fa-download"></i> Download PDF
+              </button>
+              <button class="btn-back" onclick="backToOptions()">
+                <i class="fas fa-arrow-left"></i> Back
+              </button>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h3>Recent Activities</h3>
+            <p>Your recent donation claims and activities:</p>
+          </div>
+
+          <div class="timeline" id="timelineList">
+            <p style="text-align: center; color: #999;">Loading timeline...</p>
+          </div>
+        </div>
+
+        <!-- Impact Report -->
+        <div id="impactReport" class="report-view">
+          <div class="report-header">
+            <h2><i class="fas fa-leaf"></i> Environmental Impact Report</h2>
+            <div class="report-actions">
+              <button class="btn-download" onclick="downloadReport('impact')">
+                <i class="fas fa-download"></i> Download PDF
+              </button>
+              <button class="btn-back" onclick="backToOptions()">
+                <i class="fas fa-arrow-left"></i> Back
+              </button>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <h3>Carbon Footprint Reduced</h3>
+            <div class="chart-placeholder">
+              <i class="fas fa-tree"></i>
+              <p id="carbonReduced">Calculating...</p>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <h3>Waste Diverted from Landfills</h3>
+            <div class="chart-placeholder">
+              <i class="fas fa-recycle"></i>
+              <p id="wasteReduced">Calculating...</p>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <h3>Environmental Impact Breakdown</h3>
+            <ul id="impactList" style="color: #666; line-height: 1.8;">
+              <li>Loading impact data...</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EcoMarket</h3>
+            <p>Sustainable Community Marketplace for reuse and recycling</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="ngo-dashboard.html">NGO Dashboard</a></li>
+              <li><a href="marketplace.html">Marketplace</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2024 Sustainable Community Marketplace. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+      let ngoData = null;
+      let allInterests = [];
+
+
+      window.addEventListener('load', async function() {
+        // Wait for Firebase to initialize and set currentUser with userType
+        if (!currentUser || !currentUser.userType) {
+          console.log('Waiting for Firebase auth and user data...');
+          let authCheckInterval = setInterval(async () => {
+            if (currentUser && currentUser.userType) {
+              clearInterval(authCheckInterval);
+              await initReportPage();
+            }
+          }, 100);
+          // Timeout after 5 seconds
+          setTimeout(() => {
+            if (!currentUser) {
+              clearInterval(authCheckInterval);
+              window.location.href = 'login.html';
+            }
+          }, 5000);
+        } else {
+          await initReportPage();
+        }
+      });
+
+      async function initReportPage() {
+        // Check authentication
+        if (!currentUser) {
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 500);
+          return;
+        }
+
+        // Only for NGOs
+        if (currentUser.userType !== 'ngo') {
+          showNotification("Access denied. NGO access required.", "error");
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+          return;
+        }
+        // Only for NGOs
+        if (currentUser.userType !== 'ngo') {
+          showNotification("Access denied. NGO access required.", "error");
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+          return;
+        }
+
+        // Update greeting
+        const greeting = document.getElementById("userGreeting");
+        if (greeting && currentUser.displayName) {
+          greeting.textContent = `Welcome, ${currentUser.displayName}!`;
+        }
+
+        // Load data
+        await loadReportData();
+      }
+
+      async function loadReportData() {
+        try {
+          // Load NGO data
+          const userDoc = await db.collection("users").doc(currentUser.uid).get();
+          if (userDoc.exists) {
+            ngoData = userDoc.data();
+          }
+
+          // Load all interests
+          const snapshot = await db
+            .collection("ngoInterests")
+            .where("ngoId", "==", currentUser.uid)
+            .orderBy("createdAt", "desc")
+            .get();
+
+          allInterests = [];
+          snapshot.forEach(doc => {
+            allInterests.push({
+              id: doc.id,
+              ...doc.data()
+            });
+          });
+
+          populateReports();
+        } catch (error) {
+          console.error("Error loading report data:", error);
+          showNotification("Error loading report data", "error");
+        }
+      }
+
+      function populateReports() {
+        // Set report date
+        const today = new Date().toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+        document.getElementById("reportDate").textContent = `Generated on ${today}`;
+        document.getElementById("orgName").textContent = ngoData?.name || 'Your Organization';
+
+        // Summary metrics
+        const donationsClaimed = ngoData?.donationsClaimed || 0;
+        const itemsReceived = ngoData?.itemsReceived || 0;
+        const impactScore = ngoData?.impactScore || 0;
+        const pendingCount = allInterests.filter(i => i.status === 'pending').length;
+
+        document.getElementById("summaryDonationsClaimed").textContent = donationsClaimed;
+        document.getElementById("summaryItemsReceived").textContent = itemsReceived;
+        document.getElementById("summaryImpactScore").textContent = impactScore;
+        document.getElementById("summaryPending").textContent = pendingCount;
+
+        // Achievements
+        const achievements = [];
+        if (itemsReceived > 0) achievements.push(`Successfully received ${itemsReceived} donation${itemsReceived !== 1 ? 's' : ''}`);
+        if (impactScore > 0) achievements.push(`Generated ${impactScore} impact points through sustainable giving`);
+        if (donationsClaimed > itemsReceived) achievements.push(`${donationsClaimed - itemsReceived} donation${donationsClaimed - itemsReceived !== 1 ? 's' : ''} pending or awaiting response`);
+        if (achievements.length === 0) achievements.push("Getting started with your sustainability journey");
+
+        document.getElementById("achievementsList").innerHTML = achievements
+          .map(a => `<li>${a}</li>`)
+          .join('');
+
+        // Detailed list
+        const acceptedInterests = allInterests.filter(i => i.status === 'accepted');
+        if (acceptedInterests.length > 0) {
+          document.getElementById("detailedList").innerHTML = acceptedInterests
+            .map((interest, idx) => {
+              const date = interest.createdAt ? new Date(interest.createdAt.toDate()).toLocaleDateString() : 'N/A';
+              return `
+                <div style="background: var(--light-green); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                  <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-green);">${idx + 1}. ${interest.itemName}</h4>
+                  <p style="margin: 0; color: #666; font-size: 0.9rem;">
+                    <strong>From:</strong> ${interest.donorName} | 
+                    <strong>Date:</strong> ${date} | 
+                    <strong>Status:</strong> <span style="color: green; font-weight: 600;">✓ Accepted</span>
+                  </p>
+                </div>
+              `;
+            })
+            .join('');
+        } else {
+          document.getElementById("detailedList").innerHTML = '<p style="text-align: center; color: #999;">No accepted donations yet</p>';
+        }
+
+        // Timeline
+        if (allInterests.length > 0) {
+          document.getElementById("timelineList").innerHTML = allInterests
+            .map(interest => {
+              const date = interest.createdAt 
+                ? new Date(interest.createdAt.toDate()).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                  })
+                : 'N/A';
+              const statusText = interest.status.charAt(0).toUpperCase() + interest.status.slice(1);
+              const statusEmoji = interest.status === 'accepted' ? '✓' : interest.status === 'pending' ? '⏳' : '✕';
+              
+              return `
+                <div class="timeline-item">
+                  <div class="timeline-date">${date}</div>
+                  <div class="timeline-content">
+                    <h4>${statusEmoji} ${interest.itemName}</h4>
+                    <p>Donor: ${interest.donorName} | Status: ${statusText}</p>
+                  </div>
+                </div>
+              `;
+            })
+            .join('');
+        } else {
+          document.getElementById("timelineList").innerHTML = '<p style="text-align: center; color: #999;">No activities yet</p>';
+        }
+
+        // Environmental Impact
+        const carbonPerItem = 2.5; // kg CO2 equivalent per item
+        const wastePerItem = 15; // kg waste per item
+        const totalCarbon = (itemsReceived * carbonPerItem).toFixed(1);
+        const totalWaste = (itemsReceived * wastePerItem).toFixed(1);
+
+        document.getElementById("carbonReduced").innerHTML = `${totalCarbon} kg CO₂ equivalent`;
+        document.getElementById("wasteReduced").innerHTML = `${totalWaste} kg diverted`;
+
+        const impactList = [
+          `Prevented ${totalWaste} kg of waste from going to landfills`,
+          `Reduced carbon emissions by approximately ${totalCarbon} kg CO₂`,
+          `Helped ${itemsReceived} item${itemsReceived !== 1 ? 's' : ''} find a second life`,
+          `Contributed to sustainable community development`
+        ];
+
+        document.getElementById("impactList").innerHTML = impactList
+          .map(item => `<li>${item}</li>`)
+          .join('');
+      }
+
+      function showReport(type) {
+        // Hide all reports
+        document.querySelectorAll('.report-view').forEach(el => {
+          el.classList.remove('active');
+        });
+        document.getElementById('reportOptions').style.display = 'none';
+
+        // Show selected report
+        document.getElementById(type + 'Report').classList.add('active');
+      }
+
+      function backToOptions() {
+        document.querySelectorAll('.report-view').forEach(el => {
+          el.classList.remove('active');
+        });
+        document.getElementById('reportOptions').style.display = 'grid';
+      }
+
+      function downloadReport(type) {
+        const reportEl = document.getElementById(type + 'Report');
+        const orgName = ngoData?.name || 'Organization';
+        const printWindow = window.open('', '', 'height=600,width=800');
+        
+        printWindow.document.write('<html><head><title>Report - ' + orgName + '</title>');
+        printWindow.document.write(document.head.innerHTML);
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(reportEl.innerHTML);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        
+        setTimeout(() => {
+          printWindow.print();
+        }, 250);
+      }
+
+      // Menu toggle
+      const menuToggle = document.getElementById('menuToggle');
+      const navLinks = document.querySelector('.nav-links');
+      
+      if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+          this.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+      }
+    </script>
+</body>
+</html>

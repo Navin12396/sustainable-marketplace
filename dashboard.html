@@ -9,28 +9,39 @@
 </head>
 <body>
     <header>
-        <div class="container">
-            <nav>
-                <a href="index.html" class="logo">
-                    <i class="fas fa-leaf"></i>
-                    <span>EcoMarket</span>
-                </a>
-                
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="marketplace.html">Marketplace</a></li>
-                    <li><a href="add-item.html">List Item</a></li>
-                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                </ul>
-                
-                <div class="user-menu">
-                    <span id="userGreeting"></span>
-                    <button onclick="logout()" class="btn btn-danger">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-            </nav>
-        </div>
+      <div class="container">
+        <nav>
+          <a href="index.html" class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>EcoMarket</span>
+          </a>
+
+          <button class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="marketplace.html">Marketplace</a></li>
+            <li><a href="add-item.html">List Item</a></li>
+            <li><a href="#footer">Contact US</a></li>
+          </ul>
+
+          <div class="user-menu">
+            <span id="userGreeting" style="display: none"></span>
+            <button
+              onclick="logout()"
+              class="btn btn-danger"
+              id="logoutBtn"
+              style="display: none"
+            >
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </nav>
+      </div>
     </header>
 
     <main class="container">
@@ -46,20 +57,15 @@
                 <h3 id="co2Saved">0 kg</h3>
                 <p>CO₂ Saved</p>
             </div>
+            
             <div class="metric-card">
                 <div style="font-size: 2rem; color: var(--accent-blue); margin-bottom: 0.5rem;">
-                    <i class="fas fa-tint"></i>
+                    <i class="fas fa-hands-helping"></i>
                 </div>
-                <h3 id="waterSaved">0 L</h3>
-                <p>Water Saved</p>
+                <h3 id="itemsDonated">0</h3>
+                <p>Items Donated</p>
             </div>
-            <div class="metric-card">
-                <div style="font-size: 2rem; color: var(--earth-brown); margin-bottom: 0.5rem;">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-                <h3 id="landfillReduced">0 m³</h3>
-                <p>Landfill Reduced</p>
-            </div>
+            
             <div class="metric-card">
                 <div style="font-size: 2rem; color: var(--warning); margin-bottom: 0.5rem;">
                     <i class="fas fa-box"></i>
@@ -80,21 +86,78 @@
                 <a href="marketplace.html" class="btn btn-secondary" style="text-align: center;">
                     <i class="fas fa-search"></i><br>Browse Items
                 </a>
-                <a href="#" class="btn btn-secondary" style="text-align: center;">
+                <a href="#myDonationsSection" class="btn btn-secondary" style="text-align: center;">
                     <i class="fas fa-hands-helping"></i><br>My Donations
                 </a>
                 <a href="#" class="btn btn-secondary" style="text-align: center;">
                     <i class="fas fa-chart-line"></i><br>Impact Report
+
                 </a>
             </div>
         </div>
         
         <div class="card">
             <h2 style="margin-bottom: 1rem; color: var(--primary-green);">
-                <i class="fas fa-list"></i> My Listed Items
+                <i class="fas fa-list"></i> My Listed Items (For Sale/Free)
             </h2>
             <div id="myItems" class="items-grid">
                 </div>
+        </div>
+        
+        <div class="card" id="myDonationsSection">
+            <h2 style="margin-bottom: 1rem; color: var(--warning);">
+                <i class="fas fa-hands-helping"></i> My Donations
+            </h2>
+            <div id="myDonationsList" class="items-grid">
+                </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 1rem; color: var(--primary-green);">
+                💳 My Orders (Purchases)
+            </h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #e8f5e9; border-bottom: 2px solid #2e8b57;">
+                        <th style="padding: 1rem; text-align: left;">Item</th>
+                        <th style="padding: 1rem; text-align: left;">Price</th>
+                        <th style="padding: 1rem; text-align: left;">Status</th>
+                        <th style="padding: 1rem; text-align: left;">Date</th>
+                        <th style="padding: 1rem; text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 1rem; color: var(--primary-green);">
+                💰 My Sales History
+            </h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #e8f5e9; border-bottom: 2px solid #2e8b57;">
+                        <th style="padding: 1rem; text-align: left;">Item Sold</th>
+                        <th style="padding: 1rem; text-align: left;">Price</th>
+                        <th style="padding: 1rem; text-align: left;">Buyer</th>
+                        <th style="padding: 1rem; text-align: left;">Date</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTableBody">
+                    <tr><td colspan="4" style="text-align: center; padding: 2rem;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="card">
+            <h2 style="margin-bottom: 1rem; color: var(--primary-green);">
+                <i class="fas fa-hands-helping"></i> NGO Interests in Your Donations
+            </h2>
+            <div id="ngoInterestsList" class="items-grid">
+                <p style="text-align: center; grid-column: 1 / -1;">Loading NGO interests...</p>
+            </div>
         </div>
         
         <div class="card">
@@ -112,82 +175,47 @@
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="copyright">
-                <p>&copy; 2024 Sustainable Community Marketplace. All rights reserved.</p>
-            </div>
+    <footer id = "footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EcoMarket</h3>
+            <p>Sustainable Community Marketplace for reuse and recycling</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="marketplace.html">Marketplace</a></li>
+              <li><a href="add-item.html">List Item</a></li>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="ngo-dashboard.html">NGO's Dashboard</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact</h3>
+            <ul class="footer-links">
+              <li><i class="fas fa-envelope"></i> info@ecomarket.com</li>
+              <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+              <li>
+                <i class="fas fa-map-marker-alt"></i> Green City, EC 12345
+              </li>
+            </ul>
+          </div>
         </div>
+        <div class="copyright">
+          <p>
+            &copy; 2024 Sustainable Community Marketplace. All rights reserved.
+          </p>
+        </div>
+      </div>
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
-    
-    <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Update user greeting
-            // NOTE: The logic here relies on the global 'auth' object which is not correctly initialized
-            // in the way the original code intended. The global script.js handles the user check.
-            // This inline script logic is redundant and prone to errors but is kept as originally intended.
-            
-            // To ensure the dashboard works, rely on the initDashboardPage in script.js which runs after Firebase is ready.
-            
-            // The following redundant code is kept but should be treated as non-functional until initDashboardPage runs:
 
-            /*
-            if (auth.currentUser) {
-                document.getElementById('userGreeting').textContent = `Welcome, ${auth.currentUser.name}!`;
-                document.getElementById('userGreeting').style.display = 'inline';
-            }
-            
-            // Load user's items
-            const myItemsContainer = document.getElementById('myItems');
-            if (myItemsContainer) {
-                const userItems = items.filter(item => item.userId === auth.currentUser?.id);
-                
-                if (userItems.length === 0) {
-                    myItemsContainer.innerHTML = `
-                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                            <p>You haven't listed any items yet.</p>
-                            <a href="add-item.html" class="btn btn-primary">List Your First Item</a>
-                        </div>
-                    `;
-                } else {
-                    myItemsContainer.innerHTML = userItems.map(item => `
-                        <div class="item-card">
-                            <img src="https://via.placeholder.com/300x200/90EE90/2E8B57?text=${encodeURIComponent(item.name)}" 
-                                 alt="${item.name}" class="item-image">
-                            <div class="item-content">
-                                <span class="item-category">${item.category}</span>
-                                <h3 class="item-title">${item.name}</h3>
-                                <p><strong>Status:</strong> ${item.status}</p>
-                                <div style="margin-top: 1rem;">
-                                    <a href="item-detail.html?id=${item.id}" class="btn btn-primary" style="padding: 5px 15px;">
-                                        View Details
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            }
-            
-            // Calculate and display impact
-            const user = auth.currentUser;
-            if (user) {
-                const itemsListed = user.itemsListed || 0;
-                document.getElementById('itemsListed').textContent = itemsListed;
-                
-                const impact = auth.calculateImpact(itemsListed);
-                document.getElementById('co2Saved').textContent = `${impact.co2Saved} kg`;
-                document.getElementById('waterSaved').textContent = `${impact.waterSaved} L`;
-                document.getElementById('landfillReduced').textContent = `${impact.landfillReduced} m³`;
-            }
-            */
-        });
-    </script>
-</body>
+    <script src="script.js"></script>
+    </body>
 </html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - EcoMarket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .order-detail-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .order-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .order-item-image {
+            width: 100%;
+            max-width: 300px;
+            border-radius: var(--border-radius);
+            object-fit: cover;
+        }
+        .order-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+        .order-status {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .detail-row {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-row strong {
+            color: var(--primary-green);
+        }
+        @media (max-width: 768px) {
+            .order-header {
+                grid-template-columns: 1fr;
+            }
+            .order-detail-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <span>EcoMarket</span>
+                </a>
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="marketplace.html">Marketplace</a></li>
+                    <li><a href="add-item.html">List Item</a></li>
+                    <li><a href="#footer">Contact US</a></li>
+                </ul>
+                <div class="user-menu">
+                    <span id="userGreeting" style="display: none"></span>
+                    <button onclick="logout()" class="btn btn-danger" id="logoutBtn" style="display: none">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="order-detail-container">
+        <a href="dashboard.html" class="btn btn-secondary" style="margin-bottom: 1rem;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <h1 style="color: var(--primary-green); margin-bottom: 2rem;">Order Details</h1>
+
+        <div class="order-header">
+            <div>
+                <img id="itemImage" src="" alt="Item" class="order-item-image">
+            </div>
+            <div class="order-info">
+                <h2 id="itemName" style="color: var(--primary-green);"></h2>
+                <div class="order-status" id="orderStatus"></div>
+                
+                <div class="detail-row">
+                    <strong>Order ID:</strong>
+                    <span id="orderId"></span>
+                </div>
+                <div class="detail-row">
+                    <strong>Price:</strong>
+                    <span id="orderPrice" style="font-weight: bold; color: var(--primary-green);"></span>
+                </div>
+                <div class="detail-row">
+                    <strong>Quantity:</strong>
+                    <span id="orderQuantity">1</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Order Date:</strong>
+                    <span id="orderDate"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 2rem;">
+            <h3 style="color: var(--primary-green); margin-bottom: 1rem;">
+                <i class="fas fa-map-marker-alt"></i> Delivery Information
+            </h3>
+            <div class="detail-row">
+                <strong>Seller:</strong>
+                <span id="sellerName"></span>
+            </div>
+            <div class="detail-row">
+                <strong>Seller Contact:</strong>
+                <span id="sellerContact"></span>
+            </div>
+            <div class="detail-row">
+                <strong>Delivery Address:</strong>
+                <span id="deliveryAddress"></span>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 2rem;">
+            <h3 style="color: var(--primary-green); margin-bottom: 1rem;">
+                <i class="fas fa-credit-card"></i> Payment Information
+            </h3>
+            <div class="detail-row">
+                <strong>Payment Method:</strong>
+                <span id="paymentMethod"></span>
+            </div>
+            <div class="detail-row">
+                <strong>Item Price:</strong>
+                <span id="itemPrice"></span>
+            </div>
+            <div class="detail-row">
+                <strong>Shipping Cost:</strong>
+                <span id="shippingCost"></span>
+            </div>
+            <div class="detail-row">
+                <strong>Platform Fee (10%):</strong>
+                <span id="platformFee"></span>
+            </div>
+            <div class="detail-row" style="border-top: 2px solid var(--primary-green); padding-top: 0.5rem;">
+                <strong>Total Amount:</strong>
+                <span id="totalAmount" style="font-weight: bold; color: var(--primary-green); font-size: 1.1rem;"></span>
+            </div>
+
+        <div class="card" style="margin-top: 2rem;">
+            <h3 style="color: var(--primary-green); margin-bottom: 1rem;">
+                <i class="fas fa-info-circle"></i> Order Timeline
+            </h3>
+            <div id="orderTimeline" style="display: grid; gap: 1rem;"></div>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <a href="dashboard.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <button class="btn btn-primary" id="contactSellerBtn" style="display: none;">
+                <i class="fas fa-envelope"></i> Contact Seller
+            </button>
+        </div>
+    </main>
+
+    <footer id = "footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EcoMarket</h3>
+            <p>Sustainable Community Marketplace for reuse and recycling</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="marketplace.html">Marketplace</a></li>
+              <li><a href="add-item.html">List Item</a></li>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="ngo-dashboard.html">NGO's Dashboard</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact</h3>
+            <ul class="footer-links">
+              <li><i class="fas fa-envelope"></i> info@ecomarket.com</li>
+              <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+              <li>
+                <i class="fas fa-map-marker-alt"></i> Green City, EC 12345
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>
+            &copy; 2024 Sustainable Community Marketplace. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
+
+    <script src="script.js"></script>
+
+    <script>
+        // Initialize page when script.js is loaded and auth is ready
+        window.addEventListener('load', function() {
+            // Wait a moment for Firebase auth to initialize
+            setTimeout(function() {
+                if (auth.currentUser) {
+                    loadOrderDetails();
+                } else {
+                    // User not logged in, redirect to login
+                    window.location.href = 'login.html';
+                }
+            }, 500);
+        });
+
+        // Hamburger menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+            
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function() {
+                    menuToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                });
+            });
+        }
+
+        // Load order details
+        async function loadOrderDetails() {
+            // Support both 'id' and 'orderId' URL parameters
+            const orderId = new URLSearchParams(window.location.search).get('id') || 
+                           new URLSearchParams(window.location.search).get('orderId');
+            
+            console.log('Attempting to load order:', orderId);
+            
+            if (!orderId) {
+                console.error('No order ID found in URL');
+                alert('Order ID not found. Please go back to dashboard.');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            if (!auth.currentUser) {
+                console.log('User not authenticated, redirecting to login');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                console.log('Fetching order document:', orderId);
+                const orderDoc = await db.collection('orders').doc(orderId).get();
+                
+                if (!orderDoc.exists) {
+                    console.error('Order document does not exist:', orderId);
+                    alert('Order not found. The order may have been deleted.');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+
+                const order = orderDoc.data();
+                console.log('Order loaded successfully:', order);
+                
+                // Check permission - user must be buyer or seller
+                if (order.buyerId !== auth.currentUser.uid && order.sellerId !== auth.currentUser.uid) {
+                    console.error('Permission denied. User:', auth.currentUser.uid, 'Buyer:', order.buyerId, 'Seller:', order.sellerId);
+                    alert('You do not have permission to view this order');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+                
+                // Get item details
+                console.log('Fetching item:', order.itemId);
+                const itemDoc = await db.collection('items').doc(order.itemId).get();
+                const item = itemDoc.data() || {};
+                console.log('Item loaded:', item);
+
+                // Populate all details
+                document.getElementById('itemName').textContent = item.name || 'Unknown Item';
+                document.getElementById('itemImage').src = item.imageUrls?.[0] || item.imageUrl || 'https://via.placeholder.com/300x300?text=No+Image';
+                document.getElementById('orderId').textContent = orderId;
+                
+                const orderDate = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : new Date().toLocaleDateString();
+                document.getElementById('orderDate').textContent = orderDate;
+                document.getElementById('orderPrice').textContent = `₹${(order.itemPrice || 0).toFixed(2)}`;
+                
+                document.getElementById('sellerName').textContent = order.sellerName || item.userName || 'Unknown';
+                document.getElementById('sellerContact').textContent = order.sellerEmail || 'Not available';
+                document.getElementById('deliveryAddress').textContent = order.buyerInfo?.address || order.deliveryAddress || 'Not provided';
+                
+                document.getElementById('paymentMethod').textContent = order.paymentMethod || 'N/A';
+                document.getElementById('itemPrice').textContent = `₹${(order.itemPrice || 0).toFixed(2)}`;
+                document.getElementById('shippingCost').textContent = `₹${(order.shippingCost || 10).toFixed(2)}`;
+                document.getElementById('platformFee').textContent = `₹${(order.platformFee || 0).toFixed(2)}`;
+                document.getElementById('totalAmount').textContent = `₹${(order.totalAmount || (order.itemPrice || 0) + (order.shippingCost || 10) + (order.platformFee || 0)).toFixed(2)}`;
+
+                // Status
+                const orderStatus = document.getElementById('orderStatus');
+                const status = order.status || 'pending';
+                orderStatus.className = `order-status status-${status}`;
+                orderStatus.innerHTML = `<strong><i class="fas fa-info-circle"></i> Status: ${status.toUpperCase()}</strong>`;
+                
+                console.log('Order details loaded successfully');
+
+            } catch (error) {
+                console.error('Error loading order:', error);
+                alert('Error loading order: ' + error.message + '\n\nPlease check the browser console for details.');
+                window.location.href = 'dashboard.html';
+            }
+        }
+    </script>
+</body>
+</html>

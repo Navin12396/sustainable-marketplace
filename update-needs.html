@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Needs - EcoMarket NGO Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .needs-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .needs-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--primary-green);
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-family: inherit;
+        box-sizing: border-box;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+      }
+
+      .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .checkbox-item {
+        display: flex;
+        align-items: center;
+      }
+
+      .checkbox-item input[type="checkbox"] {
+        width: auto;
+        margin-right: 0.5rem;
+        cursor: pointer;
+      }
+
+      .checkbox-item label {
+        margin: 0;
+        font-weight: normal;
+        color: #333;
+        cursor: pointer;
+      }
+
+      .current-needs {
+        background: var(--light-green);
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+      }
+
+      .current-needs h4 {
+        margin-top: 0;
+        color: var(--primary-green);
+      }
+
+      .need-tag {
+        display: inline-block;
+        background: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        border: 1px solid var(--primary-green);
+        color: var(--primary-green);
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+
+      .form-actions button {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .btn-submit {
+        background: var(--primary-green);
+        color: white;
+      }
+
+      .btn-submit:hover:not(:disabled) {
+        background: #45a049;
+      }
+
+      .btn-cancel {
+        background: #e0e0e0;
+        color: #333;
+      }
+
+      .btn-cancel:hover {
+        background: #d0d0d0;
+      }
+
+      .info-box {
+        background: #e3f2fd;
+        padding: 1rem;
+        border-left: 4px solid #2196F3;
+        border-radius: 4px;
+        margin-bottom: 2rem;
+        color: #1976D2;
+      }
+
+      .info-box i {
+        margin-right: 0.5rem;
+      }
+    </style>
+</head>
+<body>
+    <header>
+      <div class="container">
+        <nav>
+          <a href="index.html" class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>EcoMarket</span>
+          </a>
+
+          <button class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <ul class="nav-links">
+            <li><a href="ngo-dashboard.html">Dashboard</a></li>
+            <li><a href="update-needs.html" class="active">Update Needs</a></li>
+            <li><a href="marketplace.html">Marketplace</a></li>
+            <li><a href="#footer">Contact</a></li>
+          </ul>
+
+          <div class="user-menu">
+            <span id="userGreeting"></span>
+            <button
+              onclick="logout()"
+              class="btn btn-danger"
+              id="logoutBtn"
+            >
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container" style="padding: 2rem 0;">
+      <div style="margin-bottom: 2rem;">
+        <h1 style="color: var(--primary-green); margin-bottom: 0.5rem;">
+          <i class="fas fa-map-marker-alt"></i> Update Your Needs
+        </h1>
+        <p style="color: #666;">Tell us what items your NGO needs for your community programs</p>
+      </div>
+
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <strong>Why update your needs?</strong> Donors can see what your NGO is looking for and donate relevant items to help your mission!
+      </div>
+
+      <div class="needs-container">
+        <div class="needs-form">
+          <div id="currentNeedsSection" class="current-needs" style="display: none;">
+            <h4><i class="fas fa-list"></i> Current Needs</h4>
+            <div id="currentNeedsTags"></div>
+          </div>
+
+          <form id="needsForm">
+            <div class="form-group">
+              <label for="organization">Organization Name</label>
+              <input 
+                type="text" 
+                id="organization" 
+                name="organization" 
+                placeholder="Your NGO Name"
+                readonly
+                style="background: #f5f5f5;"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>What items does your NGO need? <span style="color: red;">*</span></label>
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input type="checkbox" id="need-electronics" name="needs" value="Electronics">
+                  <label for="need-electronics">Electronics & Gadgets</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="need-furniture" name="needs" value="Furniture">
+                  <label for="need-furniture">Furniture</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="need-clothing" name="needs" value="Clothing">
+                  <label for="need-clothing">Clothing & Textiles</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="need-books" name="needs" value="Books">
+                  <label for="need-books">Books & Learning Materials</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="need-toys" name="needs" value="Toys">
+                  <label for="need-toys">Toys & Games</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="need-sports" name="needs" value="Sports">
+                  <label for="need-sports">Sports Equipment</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="need-kitchen" name="needs" value="Kitchen">
+                  <label for="need-kitchen">Kitchen Items</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="need-bedding" name="needs" value="Bedding">
+                  <label for="need-bedding">Bedding & Linens</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="urgentNeeds">Most Urgent Need</label>
+              <select id="urgentNeeds" name="urgentNeeds">
+                <option value="">Select if any need is urgent</option>
+                <option value="High - Needed ASAP">High - Needed ASAP</option>
+                <option value="Medium - Within 2 weeks">Medium - Within 2 weeks</option>
+                <option value="Low - Whenever available">Low - Whenever available</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="details">Additional Details or Requirements</label>
+              <textarea 
+                id="details" 
+                name="details"
+                placeholder="e.g., We're looking for used laptops for our education center. Condition: Fair to Good. We serve 50+ students..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="contact">Contact Person for Donations</label>
+              <input 
+                type="text" 
+                id="contact" 
+                name="contact" 
+                placeholder="Name of person to contact about donations"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-submit">
+                <i class="fas fa-save"></i> Save Needs
+              </button>
+              <button type="button" class="btn-cancel" onclick="goBack()">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EcoMarket</h3>
+            <p>Sustainable Community Marketplace for reuse and recycling</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="ngo-dashboard.html">NGO Dashboard</a></li>
+              <li><a href="marketplace.html">Marketplace</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2024 Sustainable Community Marketplace. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+
+      window.addEventListener('load', async function() {
+        // Wait for Firebase to initialize and set currentUser with userType
+        if (!currentUser || !currentUser.userType) {
+          console.log('Waiting for Firebase auth and user data...');
+          let authCheckInterval = setInterval(async () => {
+            if (currentUser && currentUser.userType) {
+              clearInterval(authCheckInterval);
+              await initNeedsPage();
+            }
+          }, 100);
+          // Timeout after 5 seconds
+          setTimeout(() => {
+            if (!currentUser) {
+              clearInterval(authCheckInterval);
+              window.location.href = 'login.html';
+            }
+          }, 5000);
+        } else {
+          await initNeedsPage();
+        }
+      });
+
+      async function initNeedsPage() {
+        // Check authentication
+        if (!currentUser) {
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 500);
+          return;
+        }
+
+        // Only for NGOs
+        if (currentUser.userType !== 'ngo') {
+          showNotification("Access denied. NGO access required.", "error");
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+          return;
+        }
+        // Only for NGOs
+        if (currentUser.userType !== 'ngo') {
+          showNotification("Access denied. NGO access required.", "error");
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+          return;
+        }
+
+        // Update greeting
+        const greeting = document.getElementById("userGreeting");
+        if (greeting && currentUser.displayName) {
+          greeting.textContent = `Welcome, ${currentUser.displayName}!`;
+        }
+
+        // Load current needs
+        await loadCurrentNeeds();
+
+        // Set form submission
+        document.getElementById("needsForm").addEventListener('submit', handleSubmit);
+      }
+
+      async function loadCurrentNeeds() {
+        try {
+          const userDoc = await db.collection("users").doc(currentUser.uid).get();
+          
+          if (userDoc.exists) {
+            const userData = userDoc.data();
+            
+            // Set organization name
+            document.getElementById("organization").value = userData.name || '';
+
+            // Display current needs if they exist
+            if (userData.ngoNeeds && userData.ngoNeeds.length > 0) {
+              const currentNeedsSection = document.getElementById("currentNeedsSection");
+              const tagsContainer = document.getElementById("currentNeedsTags");
+              
+              currentNeedsSection.style.display = "block";
+              tagsContainer.innerHTML = userData.ngoNeeds.map(need => 
+                `<span class="need-tag">${need}</span>`
+              ).join('');
+
+              // Pre-select checkboxes
+              userData.ngoNeeds.forEach(need => {
+                const checkbox = document.querySelector(`input[value="${need}"]`);
+                if (checkbox) checkbox.checked = true;
+              });
+            }
+
+            // Load other fields
+            if (userData.urgentNeed) {
+              document.getElementById("urgentNeeds").value = userData.urgentNeed;
+            }
+            if (userData.ngoDetails) {
+              document.getElementById("details").value = userData.ngoDetails;
+            }
+            if (userData.contactPerson) {
+              document.getElementById("contact").value = userData.contactPerson;
+            }
+          }
+        } catch (error) {
+          console.error("Error loading current needs:", error);
+        }
+      }
+
+      async function handleSubmit(e) {
+        e.preventDefault();
+
+        try {
+          // Get selected needs
+          const selectedNeeds = Array.from(document.querySelectorAll('input[name="needs"]:checked'))
+            .map(cb => cb.value);
+
+          if (selectedNeeds.length === 0) {
+            showNotification("Please select at least one item category", "warning");
+            return;
+          }
+
+          const formData = {
+            ngoNeeds: selectedNeeds,
+            urgentNeed: document.getElementById("urgentNeeds").value,
+            ngoDetails: document.getElementById("details").value,
+            contactPerson: document.getElementById("contact").value,
+            needsUpdatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          };
+
+          await db.collection("users").doc(currentUser.uid).update(formData);
+
+          showNotification("Your needs have been updated! Donors will see them.", "success");
+          
+          setTimeout(() => {
+            window.location.href = "ngo-dashboard.html";
+          }, 1500);
+        } catch (error) {
+          console.error("Error saving needs:", error);
+          showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      function goBack() {
+        window.history.back();
+      }
+
+      // Menu toggle
+      const menuToggle = document.getElementById('menuToggle');
+      const navLinks = document.querySelector('.nav-links');
+      
+      if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+          this.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+      }
+    </script>
+</body>
+</html>

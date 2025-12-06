@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Donation Requests - EcoMarket NGO Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .request-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .request-card:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .request-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .request-title {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .request-title h3 {
+        margin: 0 0 0.5rem 0;
+        color: var(--primary-green);
+      }
+
+      .request-title p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-accepted {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .request-body {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .request-info {
+        font-size: 0.9rem;
+      }
+
+      .request-info strong {
+        color: var(--primary-green);
+      }
+
+      .request-item {
+        background: var(--light-green);
+        padding: 1rem;
+        border-radius: 6px;
+        grid-column: 1 / -1;
+      }
+
+      .request-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .request-actions button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-accept {
+        background: #4CAF50;
+        color: white;
+      }
+
+      .btn-accept:hover {
+        background: #45a049;
+      }
+
+      .btn-reject {
+        background: #f44336;
+        color: white;
+      }
+
+      .btn-reject:hover {
+        background: #da190b;
+      }
+
+      .filter-section {
+        background: var(--light-green);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+      }
+
+      .filter-group {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .filter-group select,
+      .filter-group input {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #999;
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+        display: block;
+      }
+    </style>
+</head>
+<body>
+    <header>
+      <div class="container">
+        <nav>
+          <a href="index.html" class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>EcoMarket</span>
+          </a>
+
+          <button class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <ul class="nav-links">
+            <li><a href="ngo-dashboard.html">Dashboard</a></li>
+            <li><a href="view-requests.html" class="active">View Requests</a></li>
+            <li><a href="marketplace.html">Marketplace</a></li>
+            <li><a href="#footer">Contact</a></li>
+          </ul>
+
+          <div class="user-menu">
+            <span id="userGreeting"></span>
+            <button
+              onclick="logout()"
+              class="btn btn-danger"
+              id="logoutBtn"
+            >
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container" style="padding: 2rem 0;">
+      <div style="margin-bottom: 2rem;">
+        <h1 style="color: var(--primary-green); margin-bottom: 0.5rem;">
+          <i class="fas fa-clipboard-list"></i> Donation Requests
+        </h1>
+        <p style="color: #666;">View and manage all donation requests from donors</p>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-group">
+          <label for="statusFilter" style="font-weight: 600;">Filter by Status:</label>
+          <select id="statusFilter">
+            <option value="all">All Requests</option>
+            <option value="pending">Pending</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button onclick="applyFilters()" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+            <i class="fas fa-filter"></i> Apply Filter
+          </button>
+          <button onclick="resetFilters()" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
+            <i class="fas fa-redo"></i> Reset
+          </button>
+        </div>
+      </div>
+
+      <div id="requestsList">
+        <div class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <p>Loading requests...</p>
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EcoMarket</h3>
+            <p>Sustainable Community Marketplace for reuse and recycling</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="ngo-dashboard.html">NGO Dashboard</a></li>
+              <li><a href="marketplace.html">Marketplace</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2024 Sustainable Community Marketplace. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+      let allRequests = [];
+      let currentFilter = 'all';
+
+
+      window.addEventListener('load', async function() {
+        // Wait for Firebase to initialize and set currentUser with userType
+        if (!currentUser || !currentUser.userType) {
+          console.log('Waiting for Firebase auth and user data...');
+          let authCheckInterval = setInterval(async () => {
+            if (currentUser && currentUser.userType) {
+              clearInterval(authCheckInterval);
+              await initRequestsPage();
+            }
+          }, 100);
+          // Timeout after 5 seconds
+          setTimeout(() => {
+            if (!currentUser) {
+              clearInterval(authCheckInterval);
+              window.location.href = 'login.html';
+            }
+          }, 5000);
+        } else {
+          await initRequestsPage();
+        }
+      });
+
+      async function initRequestsPage() {
+        // Check authentication
+        if (!currentUser) {
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 500);
+          return;
+        }
+
+        // Only for NGOs
+        if (currentUser.userType !== 'ngo') {
+          showNotification("Access denied. NGO access required.", "error");
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+          return;
+        }
+        // Only for NGOs
+        if (currentUser.userType !== 'ngo') {
+          showNotification("Access denied. NGO access required.", "error");
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1500);
+          return;
+        }
+
+        // Update greeting
+        const greeting = document.getElementById("userGreeting");
+        if (greeting && currentUser.displayName) {
+          greeting.textContent = `Welcome, ${currentUser.displayName}!`;
+        }
+
+        // Load requests
+        await loadRequests();
+      }
+
+      async function loadRequests() {
+        try {
+          const snapshot = await db
+            .collection("ngoInterests")
+            .where("ngoId", "==", currentUser.uid)
+            .orderBy("createdAt", "desc")
+            .get();
+
+          allRequests = [];
+          snapshot.forEach(doc => {
+            allRequests.push({
+              id: doc.id,
+              ...doc.data()
+            });
+          });
+
+          displayRequests(allRequests);
+        } catch (error) {
+          console.error("Error loading requests:", error);
+          showNotification("Error loading requests", "error");
+          document.getElementById("requestsList").innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-exclamation-circle"></i>
+              <p>Error loading requests: ${error.message}</p>
+            </div>
+          `;
+        }
+      }
+
+      function displayRequests(requests) {
+        const requestsList = document.getElementById("requestsList");
+
+        if (requests.length === 0) {
+          requestsList.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <p>No requests found</p>
+            </div>
+          `;
+          return;
+        }
+
+        requestsList.innerHTML = requests.map(req => {
+          const createdDate = req.createdAt ? new Date(req.createdAt.toDate()).toLocaleDateString() : 'N/A';
+          const statusClass = `status-${req.status}`;
+          const statusText = req.status.charAt(0).toUpperCase() + req.status.slice(1);
+
+          return `
+            <div class="request-card">
+              <div class="request-header">
+                <div class="request-title">
+                  <h3>${req.itemName}</h3>
+                  <p>From: <strong>${req.donorName}</strong></p>
+                </div>
+                <span class="status-badge ${statusClass}">${statusText}</span>
+              </div>
+
+              <div class="request-body">
+                <div class="request-info">
+                  <strong>Donor Email:</strong><br>${req.donorEmail}
+                </div>
+                <div class="request-info">
+                  <strong>Date Requested:</strong><br>${createdDate}
+                </div>
+                <div class="request-info">
+                  <strong>Your Message:</strong><br>${req.message || 'No message'}
+                </div>
+              </div>
+
+              <div class="request-actions">
+                ${req.status === 'pending' ? `
+                  <button class="btn-accept" onclick="respondToRequest('${req.id}', 'accepted')">
+                    <i class="fas fa-check"></i> Accept
+                  </button>
+                  <button class="btn-reject" onclick="respondToRequest('${req.id}', 'rejected')">
+                    <i class="fas fa-times"></i> Reject
+                  </button>
+                ` : `
+                  <button class="btn btn-secondary" disabled style="cursor: not-allowed; opacity: 0.6;">
+                    ${req.status === 'accepted' ? '<i class="fas fa-check-circle"></i> Accepted' : '<i class="fas fa-ban"></i> Rejected'}
+                  </button>
+                `}
+                <button class="btn btn-secondary" onclick="viewItemDetails('${req.itemId}')">
+                  <i class="fas fa-eye"></i> View Item
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function applyFilters() {
+        const filterValue = document.getElementById("statusFilter").value;
+        currentFilter = filterValue;
+
+        const filtered = filterValue === 'all' 
+          ? allRequests 
+          : allRequests.filter(req => req.status === filterValue);
+
+        displayRequests(filtered);
+      }
+
+      function resetFilters() {
+        document.getElementById("statusFilter").value = 'all';
+        currentFilter = 'all';
+        displayRequests(allRequests);
+      }
+
+      async function respondToRequest(requestId, action) {
+        const confirmMsg = action === 'accepted' 
+          ? 'Accept this donation request?' 
+          : 'Reject this donation request?';
+
+        if (!confirm(confirmMsg)) return;
+
+        try {
+          await db.collection("ngoInterests").doc(requestId).update({
+            status: action,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+
+          if (action === 'accepted') {
+            // Get NGO ID from the request
+            const requestDoc = await db.collection("ngoInterests").doc(requestId).get();
+            const ngoId = requestDoc.data().ngoId;
+
+            // Increment items received and impact score
+            await db.collection("users").doc(ngoId).update({
+              itemsReceived: firebase.firestore.FieldValue.increment(1),
+              impactScore: firebase.firestore.FieldValue.increment(10),
+            });
+
+            showNotification("Donation request accepted! Impact score updated.", "success");
+          } else {
+            showNotification("Donation request rejected.", "info");
+          }
+
+          // Reload requests
+          await loadRequests();
+        } catch (error) {
+          console.error("Error responding to request:", error);
+          showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      function viewItemDetails(itemId) {
+        window.location.href = `item-detail.html?id=${itemId}`;
+      }
+
+      // Menu toggle
+      const menuToggle = document.getElementById('menuToggle');
+      const navLinks = document.querySelector('.nav-links');
+      
+      if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+          this.classList.toggle('active');
+          navLinks.classList.toggle('active');
+        });
+      }
+    </script>
+</body>
+</html>
